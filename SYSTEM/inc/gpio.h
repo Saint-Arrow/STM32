@@ -21,5 +21,5 @@
 void GPIO_Conf(void);//≥ı ºªØ
 void LED_PB2_ON(void);
 void LED_PB2_OFF(void);
-		 				    
+void LED_PB2_TOG(void);		 				    
 #endif
