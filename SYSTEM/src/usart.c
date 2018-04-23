@@ -113,7 +113,25 @@ void add_to_send_list(uint8_t *p,uint8_t len)
 	return;
 }
 
-
+uint8_t numtostr(uint32_t num,char *str)
+{
+	uint8_t i;
+	uint8_t j;
+	uint8_t str_temp[10];
+	for(i=0;i<10;i++)
+	{
+		str_temp[i]='0'+num%10;
+		num=num/10;
+		if(!num) break;
+	}
+	i++;
+	for(j=0;j<i;j++)
+	{
+		str[j]=str_temp[i-1-j];
+	}
+	str[j]=0;
+	return i;
+}
 
 /**
   * @brief  Print a character on the HyperTerminal
@@ -136,7 +154,7 @@ void Serial_3_PutChar(uint8_t c)
   * @param  s: The string to be printed
   * @retval None
   */
-void Serial_3_PutString(uint8_t *s)
+void Serial_3_PutString(char *s)
 {	
 	while (*s != '\0')
 	{
@@ -164,7 +182,7 @@ count ++;
 if(count >= 10000) return;
 }
 }
-void Serial_1_PutString(uint8_t *s)
+void Serial_1_PutString(char *s)
 {	
 	while (*s != '\0')
 	{

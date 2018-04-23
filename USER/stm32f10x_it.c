@@ -168,6 +168,21 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
+void USART1_IRQHandler(void) 
+{	
+	uint16_t Res;
+	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  							
+	{	
+		Res = USART_ReceiveData(USART1);
+		if(USART_1_RX_STA<(USART_REC_LEN-2))
+		{
+			USART_1_RX_BUF[USART_1_RX_STA&0X3FFF] = Res;	
+			LED_PB2_OFF();	
+			usart_1_time = xTaskGetTickCountFromISR();
+			USART_1_RX_STA ++;
+		}									
+	}
+}
 void USART3_IRQHandler(void) 
 {	
 	uint16_t Res;
@@ -178,7 +193,7 @@ void USART3_IRQHandler(void)
 		{
 			USART_RX_BUF[USART_RX_STA&0X3FFF] = Res;	
 			LED_PB2_OFF();	
-			usart_time = TimeIncrease;
+			usart_time = xTaskGetTickCountFromISR();
 			USART_RX_STA ++;
 		}									
 	}

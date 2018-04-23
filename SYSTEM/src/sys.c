@@ -23,7 +23,16 @@ void STM32_SysTickInit(uint32_t HzPreSecond)
         while (1);
     }
 }
-
+uint32_t cal_timeout(uint32_t t_sys,uint32_t t_usart)
+{
+	uint32_t timeout;
+	 
+	 if(t_sys >= t_usart) 
+	 	timeout = t_sys - t_usart;
+	 else 	
+	 	timeout = UINT32_MAX - t_usart + t_sys;
+	 return timeout;
+}
 
 //http://blog.csdn.net/cp1300/article/details/48035667
 uint32_t crc32_byte(uint8_t *ptr, uint32_t len)  

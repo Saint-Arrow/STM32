@@ -116,6 +116,7 @@ void Get_SerialNum(void);
 
 void NVIC_Configuration(void);
 void SoftReset(void);
+uint32_t cal_timeout(uint32_t t_sys,uint32_t t_usart);
 void STM32_SysTickInit(uint32_t HzPreSecond);
 uint32_t cal_timeout(uint32_t t_sys,uint32_t t_usart);
 

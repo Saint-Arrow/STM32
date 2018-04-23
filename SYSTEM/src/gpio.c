@@ -18,8 +18,7 @@ void GPIO_Conf(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;				 		     //LED0-->PB.2 端口配置
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;		    //翻转速度不能省略
-	GPIO_Init(GPIOB, &GPIO_InitStructure);			
-					
+	GPIO_Init(GPIOB, &GPIO_InitStructure);							
 }
  
 void LED_PB2_ON(void)
@@ -33,4 +32,41 @@ void LED_PB2_OFF(void)
 void LED_PB2_TOG(void)
 {
 	GPIOB->ODR ^= GPIO_Pin_2;
+}
+void beep_init(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;	 
+	
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable , ENABLE);
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	   //使能PB端口时钟	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;				 		     //LED0-->PB.2 端口配置
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;		    //翻转速度不能省略
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIOA->BSRR = GPIO_Pin_14;	
+}
+void beep_10ms(void)
+{
+	GPIOA->BRR = GPIO_Pin_14;	
+	delay_ms(10);
+	GPIOA->BSRR = GPIO_Pin_14;	
+}
+void KEY_init(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;	 	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	   
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;				 		     
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;		    
+	GPIO_Init(GPIOA, &GPIO_InitStructure);	
+}
+unsigned char check_key_press(void)
+{
+	if(KEY1) return S1_PRESS;
+	if(KEY2) return S2_PRESS;
+	if(KEY3) return S3_PRESS;
+	
+	return NO_PRESS;
 }

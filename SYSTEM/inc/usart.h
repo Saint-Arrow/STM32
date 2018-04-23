@@ -57,13 +57,14 @@ extern uint8_t USART_1_RX_BUF[USART_REC_LEN],RX_1_MCU[USART_REC_LEN];
 void uart1_init(uint32_t bound);
 void uart3_init(uint32_t bound);
 void add_to_send_list(uint8_t *p,uint8_t len);
+uint8_t numtostr(uint32_t num,char *str);
 
 void Serial_3_PutChar(uint8_t c);
-void Serial_3_PutString(uint8_t *s);
+void Serial_3_PutString(char *s);
 void Serial_3_PutData(uint8_t *s,uint16_t len);
 
 void Serial_1_PutChar(uint8_t c);
-void Serial_1_PutString(uint8_t *s);
+void Serial_1_PutString(char *s);
 void Serial_1_PutData(uint8_t *s,uint16_t len);
 
 uint16_t YmodemCrc16(uint8_t *bytes, uint32_t len,uint32_t crc);

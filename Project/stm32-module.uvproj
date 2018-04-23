@@ -351,7 +351,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\lib\inc;..\CMSIS;..\SYSTEM\inc;..\USER;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3</IncludePath>
+              <IncludePath>..\lib\inc;..\CMSIS;..\SYSTEM\inc;..\USER;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM3;..\USER\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -501,6 +501,16 @@
               <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\stm32f10x_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\OLED\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>GW.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\GW.c</FilePath>
             </File>
           </Files>
         </Group>
