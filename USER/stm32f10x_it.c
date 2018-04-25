@@ -171,6 +171,7 @@ void DebugMon_Handler(void)
 void USART1_IRQHandler(void) 
 {	
 	uint16_t Res;
+	BaseType_t xHigherPriTask;
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  							
 	{	
 		Res = USART_ReceiveData(USART1);
@@ -178,14 +179,17 @@ void USART1_IRQHandler(void)
 		{
 			USART_1_RX_BUF[USART_1_RX_STA&0X3FFF] = Res;	
 			LED_PB2_OFF();	
-			usart_1_time = xTaskGetTickCountFromISR();
+			//usart_1_time = xTaskGetTickCountFromISR();
 			USART_1_RX_STA ++;
+			xTimerResetFromISR(U1RXTimer_Handle,&xHigherPriTask);
+			portYIELD_FROM_ISR(xHigherPriTask);
 		}									
 	}
 }
 void USART3_IRQHandler(void) 
 {	
 	uint16_t Res;
+	BaseType_t xHigherPriTask;
 	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  							
 	{	
 		Res = USART_ReceiveData(USART3);
@@ -193,8 +197,10 @@ void USART3_IRQHandler(void)
 		{
 			USART_RX_BUF[USART_RX_STA&0X3FFF] = Res;	
 			LED_PB2_OFF();	
-			usart_time = xTaskGetTickCountFromISR();
+			//usart_time = xTaskGetTickCountFromISR();
 			USART_RX_STA ++;
+			xTimerResetFromISR(U3RXTimer_Handle,&xHigherPriTask);
+			portYIELD_FROM_ISR(xHigherPriTask);
 		}									
 	}
 }

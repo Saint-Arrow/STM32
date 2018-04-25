@@ -35,8 +35,8 @@
 /* Private/Exported define ------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Private/Exported variables ------------------------------------------------*/
-
-
+extern TimerHandle_t	U1RXTimer_Handle;
+extern TimerHandle_t	U3RXTimer_Handle;
 /* Exported functions ------------------------------------------------------- */
 
 void NMI_Handler(void);

@@ -417,6 +417,7 @@ void zll_parket_cmd(uint8_t *p,uint8_t len)
 		//update
 		case MSG_update_ask:		 zb_update_ask(p,len);break;
 		case MSG_update_finish:		 zb_update_finished(p,len);break;
+		default:break;
 		
 	}
 	

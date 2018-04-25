@@ -14,6 +14,7 @@ void OLED_task(void *pvParameters);
 uint8_t net_id_temp;
 uint8_t led_flag=0;
 
+
 #define Check_TASK_PRIO     3
 #define Check_STK_SIZE      128
 TaskHandle_t CheckTask_Handler;
@@ -36,7 +37,7 @@ void KEY_task(void *pvParameters);
 #define KEYMSG_Q_NUM 6
 QueueHandle_t Key_Queue;
 
-
+/*
 #define USART_1_RX_Call_TASK_PRIO     6
 #define USART_1_RX_Call_STK_SIZE      500
 TaskHandle_t USART_1_RX_CallTask_Handler;
@@ -47,14 +48,16 @@ void USART_1_RX_Call_task(void *pvParameters);
 #define USART_RX_Call_STK_SIZE      500
 TaskHandle_t USART_RX_CallTask_Handler;
 void USART_RX_Call_task(void *pvParameters);
-
+*/
 
 TimerHandle_t 	AutoReloadTimer_Handle;			
 TimerHandle_t	OneShotTimer_Handle;			
-
+TimerHandle_t	U1RXTimer_Handle;	
+TimerHandle_t	U3RXTimer_Handle;	
 void AutoReloadCallback(TimerHandle_t xTimer); 
-void OneShotCallback(TimerHandle_t xTimer);		
-
+void OneShotCallback(TimerHandle_t xTimer);	
+void U1RXCallback(TimerHandle_t xTimer);
+void U3RXCallback(TimerHandle_t xTimer);
 uint8_t dev_buf[5+10*ZLL_MAX_Dev];
 
 void Hal_init(void);
@@ -257,7 +260,8 @@ void START_task(void *pvParameters)
 	            (void*            )NULL,
 	            (UBaseType_t      )KEY_TASK_PRIO,
 	            (TaskHandle_t*    )&KEYTask_Handler
-	           );					 
+	           );
+/*						 
 	xTaskCreate((TaskFunction_t   )USART_RX_Call_task,
 	            (const char*      )"USART_RX_Call_task",
 	            (uint16_t         )USART_RX_Call_STK_SIZE,
@@ -273,6 +277,7 @@ void START_task(void *pvParameters)
 	            (UBaseType_t      )USART_1_RX_Call_TASK_PRIO,
 	            (TaskHandle_t*    )&USART_1_RX_CallTask_Handler
 	           );		
+						 */
   AutoReloadTimer_Handle=xTimerCreate((const char*		)"AutoReloadTimer",
 									                    (TickType_t			)1000/portTICK_PERIOD_MS,
 																			(UBaseType_t		)pdTRUE,
@@ -284,11 +289,32 @@ void START_task(void *pvParameters)
 																	 (UBaseType_t			)pdFALSE,
 																	 (void*					)2,
 																	 (TimerCallbackFunction_t)OneShotCallback); 
+	U1RXTimer_Handle=xTimerCreate((const char*			)"U1RX",
+																	 (TickType_t			)50/portTICK_PERIOD_MS,
+																	 (UBaseType_t			)pdFALSE,
+																	 (void*					)3,
+																	 (TimerCallbackFunction_t)U1RXCallback); 
+	U3RXTimer_Handle=xTimerCreate((const char*			)"U3RX",
+																	 (TickType_t			)50/portTICK_PERIOD_MS,
+																	 (UBaseType_t			)pdFALSE,
+																	 (void*					)4,
+																	 (TimerCallbackFunction_t)U3RXCallback); 
 	xTimerStart(AutoReloadTimer_Handle,0);																 
 	Key_Queue=xQueueCreate(1,sizeof(struct key_data));
 	vTaskDelete(STARTTask_Handler);
 	taskEXIT_CRITICAL(); 	
 }
+void U3RXCallback(TimerHandle_t xTimer)
+{
+	uint16_t len_3=USART_RX_STA;
+	LED_PB2_ON();	
+	memcpy((char *)&RX_MCU[0],(char*)USART_RX_BUF,USART_RX_STA);
+	if(RX_MCU[0] != 0X7E) Serial_1_PutData(RX_MCU,len_3);
+	USART_RX_STA =0;								
+	zll_parket_check((unsigned char *)RX_MCU,len_3);
+	
+}
+/*
 void USART_RX_Call_task(void *pvParameters)
 {
 	while(1)
@@ -348,6 +374,7 @@ void USART_RX_Call_task(void *pvParameters)
 	
 	
 }
+*/
 void USART_TX_Call_task(void *pvParameters)
 {
 	while(1)
@@ -390,6 +417,15 @@ void usart1_pack(uint8_t *p,uint8_t len)
 	else 
 		add_to_send_list(p,len);
 }
+void U1RXCallback(TimerHandle_t xTimer)
+{
+	uint16_t len=USART_1_RX_STA;
+	USART_1_RX_STA =0;	
+	memcpy((char *)RX_1_MCU,(char*)USART_1_RX_BUF,len);
+	usart1_pack(RX_1_MCU,len);
+	LED_PB2_ON();		
+}
+/*
 void USART_1_RX_Call_task(void *pvParameters)
 {
 	while(1)
@@ -413,6 +449,7 @@ void USART_1_RX_Call_task(void *pvParameters)
 	}
 	
 }
+*/
 void Check_task(void *pvParameters)
 {
 	static unsigned char flag;
@@ -682,8 +719,8 @@ void OLED_task(void *pvParameters)
 							UBaseType_t task3 = uxTaskGetStackHighWaterMark(CheckTask_Handler);
 							UBaseType_t task4 = uxTaskGetStackHighWaterMark(USART_TX_CallTask_Handler);
 							UBaseType_t task5 = uxTaskGetStackHighWaterMark(KEYTask_Handler);
-							UBaseType_t task6 = uxTaskGetStackHighWaterMark(USART_1_RX_CallTask_Handler);
-							UBaseType_t task7 = uxTaskGetStackHighWaterMark(USART_RX_CallTask_Handler);
+							//UBaseType_t task6 = uxTaskGetStackHighWaterMark(USART_1_RX_CallTask_Handler);
+							//UBaseType_t task7 = uxTaskGetStackHighWaterMark(USART_RX_CallTask_Handler);
 
 							
 							numtostr(task1,out);
@@ -701,12 +738,13 @@ void OLED_task(void *pvParameters)
 							numtostr(task5,out);
 							Serial_1_PutString(out);
 							Serial_1_PutChar(' ');
+							/*
 							numtostr(task6,out);
 							Serial_1_PutString(out);
 							Serial_1_PutChar(' ');
 							numtostr(task7,out);
 							Serial_1_PutString(out);
-							Serial_1_PutChar(' ');
+							Serial_1_PutChar(' ');*/
 							
 				
 							
