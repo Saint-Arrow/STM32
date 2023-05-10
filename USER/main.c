@@ -15,6 +15,7 @@ uint8_t net_id_temp;
 uint8_t led_flag=0;
 
 
+
 #define Check_TASK_PRIO     3
 #define Check_STK_SIZE      128
 TaskHandle_t CheckTask_Handler;
@@ -99,7 +100,7 @@ void Hal_init(void)
 	LCD_CLS_Y(3);
 	//Init...
 	LCD_Str(0,1,"ZB check...",strlen("ZB check..."));
-	memset(dev_list,0XFF,sizeof(dev_list)); //³õÊ¼»¯Êı¾İ
+	memset(dev_list,0XFF,sizeof(dev_list)); //åˆå§‹åŒ–æ•°æ®
 	
 	
 	IWDG_Init(6,1250);
@@ -163,7 +164,7 @@ void qt_cmd(uint8_t *p,uint8_t len)
 	if(*(p+2) == 1)//READ DEV
 	{
 		auto_push_flag=0;
-		zll_send_login(p,len);//ÏòÉÏÎ»»ú·¢ËÍµÇÂ¼Éè±¸µÄĞÅÏ¢
+		zll_send_login(p,len);//å‘ä¸Šä½æœºå‘é€ç™»å½•è®¾å¤‡çš„ä¿¡æ¯
 	}
 }
 void zll_send_login(uint8_t *p,uint8_t len)
@@ -178,7 +179,7 @@ void zll_send_login(uint8_t *p,uint8_t len)
 			dev_buf[0] =0X7B;
 			dev_buf[1] =5+10*len;//Length
 			dev_buf[2] =0X02;
-			dev_buf[3] =len; //Éè±¸Êı
+			dev_buf[3] =len; //è®¾å¤‡æ•°
 			for(i=0;i<len;i++)
 			{
 				dev_buf[4+i*10+0]=i+1;//NUM
@@ -464,10 +465,10 @@ void Check_task(void *pvParameters)
 				LCD_Str(0,3,"ZB pro ok...",strlen("ZB pro ok..."));
 				delay_ms(500);		
 				delay_ms(500);
-				setpid(gw_confige.net_id);		  //ÅäÖÃÍø¹ØPID
+				setpid(gw_confige.net_id);		  //é…ç½®ç½‘å…³PID
 				delay_ms(500);		
 				delay_ms(500);
-				setch(gw_confige.net_id);        //ÅäÖÃÍø¹Øchannel
+				setch(gw_confige.net_id);        //é…ç½®ç½‘å…³channel
 				delay_ms(500);
         delay_ms(500);				
 				//Init Complete
@@ -516,9 +517,9 @@ void Check_task(void *pvParameters)
 }
 void KEY_task(void *pvParameters)
 {
-  //status°´¼ü×´Ì¬»ú×´Ì¬
-	//key_buf°´¼ü»º´æ
-	//key_timeoutÏû¶¶
+  //statusæŒ‰é”®çŠ¶æ€æœºçŠ¶æ€
+	//key_bufæŒ‰é”®ç¼“å­˜
+	//key_timeoutæ¶ˆæŠ–
 	//key_jsq
 	static unsigned char status,key_buf;
 	static unsigned char key_timeout;
